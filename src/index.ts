@@ -2,6 +2,7 @@ import { getJiraTicket } from "./jira/jiraClient";
 import { getGitDiff } from "./git/diffService";
 import { getRecentCommits } from "./git/commitService";
 import { prChain } from './chains/prChain';
+import { formatPRAsMarkdown } from "./utils/markdownFormatter";
 
 async function main() {
   const ticketId = process.argv[2];
@@ -21,9 +22,9 @@ async function main() {
     diff,
     commits,
   });
-
+  const markdown = formatPRAsMarkdown(response);
   console.log("\nGenerated PR:\n");
-  console.log(response);
+  console.log(markdown);
 }
 
 main();
