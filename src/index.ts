@@ -1,5 +1,6 @@
 import { getJiraTicket } from "./jira/jiraClient";
 import { getGitDiff } from "./git/diffService";
+import { getRecentCommits } from "./git/commitService";
 
 async function main() {
   const ticketId = process.argv[2];
@@ -20,6 +21,11 @@ async function main() {
 
   console.log("\nGit Diff:");
   console.log(diff);
+
+  const commits = await getRecentCommits();
+
+  console.log("\nRecent Commits:");
+  console.log(commits);
 }
 
 main();
