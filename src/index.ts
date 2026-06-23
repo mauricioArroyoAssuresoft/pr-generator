@@ -1,6 +1,7 @@
 import { getJiraTicket } from "./jira/jiraClient";
 import { getGitDiff } from "./git/diffService";
 import { getRecentCommits } from "./git/commitService";
+import { prPrompt } from "./prompts/prPrompt";
 
 async function main() {
   const ticketId = process.argv[2];
@@ -14,18 +15,21 @@ async function main() {
 
   const ticket = await getJiraTicket(ticketId);
 
-  console.log("\nTicket:");
-  console.log(ticket);
-
   const diff = await getGitDiff();
-
-  console.log("\nGit Diff:");
-  console.log(diff);
 
   const commits = await getRecentCommits();
 
-  console.log("\nRecent Commits:");
-  console.log(commits);
+  const prompt = await prPrompt.format({
+    key: ticket.key,
+    title: ticket.title,
+    description: ticket.description,
+    acceptanceCriteria: ticket.acceptanceCriteria.join("\n"),
+    diff,
+    commits,
+  });
+
+  console.log("\nGenerated Prompt:\n");
+  console.log(prompt);
 }
 
 main();
