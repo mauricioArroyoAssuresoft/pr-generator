@@ -1,7 +1,7 @@
 import { getJiraTicket } from "./jira/jiraClient";
 import { getGitDiff } from "./git/diffService";
 import { getRecentCommits } from "./git/commitService";
-import { prPrompt } from "./prompts/prPrompt";
+import { prChain } from './chains/prChain';
 
 async function main() {
   const ticketId = process.argv[2];
@@ -11,15 +11,13 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Ticket ID: ${ticketId}`);
-
   const ticket = await getJiraTicket(ticketId);
 
   const diff = await getGitDiff();
 
   const commits = await getRecentCommits();
 
-  const prompt = await prPrompt.format({
+  const response = await prChain.invoke({
     key: ticket.key,
     title: ticket.title,
     description: ticket.description,
@@ -28,8 +26,9 @@ async function main() {
     commits,
   });
 
-  console.log("\nGenerated Prompt:\n");
-  console.log(prompt);
+  console.log("\nGenerated PR:\n");
+
+  console.log(response.content);
 }
 
 main();
