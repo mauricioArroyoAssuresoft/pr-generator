@@ -13,23 +13,19 @@ async function main() {
   }
 
   const ticket = await getJiraTicket(ticketId);
-  // const diff = await getGitDiff();
-  // const commits = await getRecentCommits();
-  // const response = await prChain.invoke({
-  //   key: ticket.key,
-  //   title: ticket.title,
-  //   description: ticket.description,
-  //   acceptanceCriteria: ticket.acceptanceCriteria.join('\n'),
-  //   diff,
-  //   commits,
-  // });
-  // const markdown = formatPRAsMarkdown(response);
-
-  // console.log('\nGenerated PR:\n');
-  // console.log(markdown);
-
-  console.log('Jira ticket ->');
-  console.log(ticket);
+  const diff = await getGitDiff();
+  const commits = await getRecentCommits();
+  const response = await prChain.invoke({
+    key: ticket.key,
+    title: ticket.title,
+    description: ticket.description,
+    acceptanceCriteria: ticket.acceptanceCriteria.join('\n'),
+    diff,
+    commits,
+  });
+  const markdown = formatPRAsMarkdown(response);
+  console.log('\nGenerated PR:\n');
+  console.log(markdown);
 }
 
 main();
