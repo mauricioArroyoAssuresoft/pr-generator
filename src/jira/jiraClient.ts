@@ -1,6 +1,8 @@
 import { env } from '../config/env';
 import { JiraTicket } from '../types/JiraTicket';
 import axios from 'axios';
+import { parseADF } from './adfParser';
+import { parseAcceptanceCriteria } from './acceptanceCriteriaParser';
 
 export async function getJiraTicket(ticketId: string): Promise<JiraTicket> {
   try {
@@ -11,12 +13,15 @@ export async function getJiraTicket(ticketId: string): Promise<JiraTicket> {
       },
     });
     const issue = response.data;
+    const description = parseADF(issue.fields.description);
+    const acceptanceCriteriaText = parseADF(issue.fields.customfield_10075);
+    const acceptanceCriteria = parseAcceptanceCriteria(acceptanceCriteriaText);
 
     return {
       key: issue.key,
       title: issue.fields.summary,
-      description: '',
-      acceptanceCriteria: [],
+      description: description,
+      acceptanceCriteria: acceptanceCriteria,
     };
   } catch (error: any) {
     console.error(`Failed to retrieve Jira ticket: ${ticketId}`);
